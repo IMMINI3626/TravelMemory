@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Travel Memory"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#1A237E"
+            android:gravity="center"
+            android:paddingTop="32dp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="나만의 여행 기록을 남겨보세요"
+            android:textSize="14sp"
+            android:textColor="#888888"
+            android:gravity="center"
+            android:paddingBottom="32dp" />
+
+        <TextView
+            android:id="@+id/tvTotalCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="총 0개의 여행 기록"
+            android:textSize="16sp"
+            android:textColor="#1A237E"
+            android:gravity="center"
+            android:paddingBottom="32dp" />
+
+        <Button
+            android:id="@+id/btnAddTravel"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="+ 새 여행 기록 추가"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="#1A237E"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+</ScrollView>
