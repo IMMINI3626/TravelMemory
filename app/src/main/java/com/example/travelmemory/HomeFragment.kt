@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import android.content.Intent
 
 class HomeFragment : Fragment() {
 
@@ -29,7 +30,7 @@ class HomeFragment : Fragment() {
         val btnAdd = view.findViewById<Button>(R.id.btnAddTravel)
 
         btnAdd.setOnClickListener {
-            // 추후 AddTravelActivity 연결
+            startActivity(Intent(requireContext(), AddTravelActivity::class.java))
         }
 
         updateStats(tvCount, tvRecentPlace, tvRecentDate)
