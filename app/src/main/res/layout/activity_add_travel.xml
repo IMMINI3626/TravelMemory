@@ -22,6 +22,7 @@
             android:id="@+id/etPlace"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textPersonName"
             android:hint="예: 부산, 제주도"
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
@@ -57,6 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:hint="여행 메모를 입력하세요"
+            android:inputType="textMultiLine"
             android:gravity="top"
             android:padding="12dp"
             android:layout_marginBottom="24dp" />
@@ -70,6 +72,16 @@
             android:textStyle="bold"
             android:backgroundTint="#1A237E"
             android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="돌아가기"
+            android:textSize="16sp"
+            android:backgroundTint="#888888"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 </ScrollView>
