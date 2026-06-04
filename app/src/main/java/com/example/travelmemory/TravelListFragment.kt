@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.content.Intent
 
 class TravelListFragment : Fragment() {
 
@@ -31,7 +32,9 @@ class TravelListFragment : Fragment() {
                 // 추후 DetailActivity 연결
             },
             onEditClick = { record ->
-                // 추후 EditTravelActivity 연결
+                val intent = Intent(requireContext(), EditTravelActivity::class.java)
+                intent.putExtra("record_id", record.id)
+                startActivity(intent)
             },
             onDeleteClick = { record -> showDeleteDialog(record) }
         )
