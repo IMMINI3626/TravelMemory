@@ -13,7 +13,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-
         if (savedInstanceState == null) {
             loadFragment(HomeFragment())
         }
