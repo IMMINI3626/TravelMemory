@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TravelMemory">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -23,10 +24,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".AddTravelActivity"
             android:exported="false" />
+
         <activity android:name=".EditTravelActivity"
             android:exported="false" />
+
         <activity android:name=".DetailActivity"
             android:exported="false" />
 
@@ -39,6 +43,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
 
     </application>
 

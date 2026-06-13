@@ -8,11 +8,19 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var dbHelper: DBHelper
     private var recordId: Long = -1
+    private var googleMap: GoogleMap? = null
+    private var currentRecord: TravelRecord? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +30,10 @@ class DetailActivity : AppCompatActivity() {
 
         dbHelper = DBHelper(this)
         recordId = intent.getLongExtra("record_id", -1)
+
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.mapFragment) as? SupportMapFragment
+        mapFragment?.getMapAsync(this)
 
         findViewById<Button>(R.id.btnEdit).setOnClickListener {
             val intent = Intent(this, EditTravelActivity::class.java)
@@ -43,6 +55,7 @@ class DetailActivity : AppCompatActivity() {
 
     private fun loadRecord() {
         val record = dbHelper.getTravelById(recordId) ?: run { finish(); return }
+        currentRecord = record
 
         findViewById<TextView>(R.id.tvPlace).text = record.place
         findViewById<TextView>(R.id.tvDate).text = record.visitDate
@@ -57,6 +70,24 @@ class DetailActivity : AppCompatActivity() {
             }
         } else {
             imgPhoto.setImageResource(android.R.drawable.ic_menu_gallery)
+        }
+
+        updateMap(record)
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+        currentRecord?.let { updateMap(it) }
+    }
+
+    private fun updateMap(record: TravelRecord) {
+        val lat = record.latitude
+        val lng = record.longitude
+        if (lat != null && lng != null && googleMap != null) {
+            val position = LatLng(lat, lng)
+            googleMap?.clear()
+            googleMap?.addMarker(MarkerOptions().position(position).title(record.place))
+            googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 13f))
         }
     }
 
