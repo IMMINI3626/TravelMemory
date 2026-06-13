@@ -7,8 +7,13 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TravelAdapter(
     private var records: MutableList<TravelRecord>,
@@ -26,6 +31,7 @@ class TravelAdapter(
         val tvPlace: TextView = itemView.findViewById(R.id.tvPlace)
         val tvDate: TextView = itemView.findViewById(R.id.tvDate)
         val tvMemo: TextView = itemView.findViewById(R.id.tvMemo)
+        val progressBar: ProgressBar = itemView.findViewById(R.id.progressBar)
 
         init {
             itemView.setOnClickListener {
@@ -60,12 +66,28 @@ class TravelAdapter(
         holder.tvMemo.text = record.memo.ifEmpty { "메모 없음" }
 
         if (!record.photoUri.isNullOrEmpty()) {
-            try {
-                holder.imgThumbnail.setImageURI(Uri.parse(record.photoUri))
-            } catch (e: Exception) {
-                holder.imgThumbnail.setImageResource(android.R.drawable.ic_menu_gallery)
+            holder.progressBar.visibility = View.VISIBLE
+            holder.imgThumbnail.visibility = View.INVISIBLE
+
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val uri = Uri.parse(record.photoUri)
+                    withContext(Dispatchers.Main) {
+                        holder.imgThumbnail.setImageURI(uri)
+                        holder.progressBar.visibility = View.GONE
+                        holder.imgThumbnail.visibility = View.VISIBLE
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        holder.imgThumbnail.setImageResource(android.R.drawable.ic_menu_gallery)
+                        holder.progressBar.visibility = View.GONE
+                        holder.imgThumbnail.visibility = View.VISIBLE
+                    }
+                }
             }
         } else {
+            holder.progressBar.visibility = View.GONE
+            holder.imgThumbnail.visibility = View.VISIBLE
             holder.imgThumbnail.setImageResource(android.R.drawable.ic_menu_gallery)
         }
     }
