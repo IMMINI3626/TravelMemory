@@ -27,6 +27,8 @@
             android:exported="false" />
         <activity android:name=".EditTravelActivity"
             android:exported="false" />
+        <activity android:name=".DetailActivity"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

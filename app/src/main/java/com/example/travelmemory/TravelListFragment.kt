@@ -29,7 +29,9 @@ class TravelListFragment : Fragment() {
         adapter = TravelAdapter(
             mutableListOf(),
             onItemClick = { record ->
-                // 추후 DetailActivity 연결
+                val intent = Intent(requireContext(), DetailActivity::class.java)
+                intent.putExtra("record_id", record.id)
+                startActivity(intent)
             },
             onEditClick = { record ->
                 val intent = Intent(requireContext(), EditTravelActivity::class.java)
