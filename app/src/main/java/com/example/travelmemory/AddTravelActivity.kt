@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.exifinterface.media.ExifInterface
 import java.io.File
 import java.util.Calendar
 
@@ -24,6 +25,8 @@ class AddTravelActivity : AppCompatActivity() {
     private lateinit var imgPreview: ImageView
     private var selectedPhotoUri: Uri? = null
     private var cameraImageUri: Uri? = null
+    private var extractedLat: Double? = null
+    private var extractedLng: Double? = null
 
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -32,6 +35,7 @@ class AddTravelActivity : AppCompatActivity() {
             result.data?.data?.let { uri ->
                 selectedPhotoUri = uri
                 imgPreview.setImageURI(uri)
+                extractGps(uri)
             }
         }
     }
@@ -43,6 +47,7 @@ class AddTravelActivity : AppCompatActivity() {
             cameraImageUri?.let { uri ->
                 selectedPhotoUri = uri
                 imgPreview.setImageURI(uri)
+                extractGps(uri)
             }
         }
     }
@@ -64,6 +69,22 @@ class AddTravelActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnGallery).setOnClickListener { openGallery() }
         findViewById<Button>(R.id.btnSave).setOnClickListener { saveRecord() }
         findViewById<Button>(R.id.btnBack).setOnClickListener { finish() }
+    }
+
+    private fun extractGps(uri: Uri) {
+        try {
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                val exif = ExifInterface(inputStream)
+                val latLong = FloatArray(2)
+                if (exif.getLatLong(latLong)) {
+                    extractedLat = latLong[0].toDouble()
+                    extractedLng = latLong[1].toDouble()
+                    Toast.makeText(this, "위치 정보 추출 완료!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun showDatePicker() {
@@ -104,7 +125,9 @@ class AddTravelActivity : AppCompatActivity() {
             place = place,
             visitDate = date,
             memo = memo,
-            photoUri = selectedPhotoUri?.toString()
+            photoUri = selectedPhotoUri?.toString(),
+            latitude = extractedLat,
+            longitude = extractedLng
         )
         dbHelper.insertTravel(record)
         Toast.makeText(this, "저장되었습니다!", Toast.LENGTH_SHORT).show()

@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.exifinterface.media.ExifInterface
 import java.io.File
 import java.util.Calendar
 
@@ -24,6 +25,8 @@ class EditTravelActivity : AppCompatActivity() {
     private lateinit var imgPreview: ImageView
     private var selectedPhotoUri: Uri? = null
     private var cameraImageUri: Uri? = null
+    private var extractedLat: Double? = null
+    private var extractedLng: Double? = null
     private var recordId: Long = -1
 
     private val galleryLauncher = registerForActivityResult(
@@ -33,6 +36,7 @@ class EditTravelActivity : AppCompatActivity() {
             result.data?.data?.let { uri ->
                 selectedPhotoUri = uri
                 imgPreview.setImageURI(uri)
+                extractGps(uri)
             }
         }
     }
@@ -44,6 +48,7 @@ class EditTravelActivity : AppCompatActivity() {
             cameraImageUri?.let { uri ->
                 selectedPhotoUri = uri
                 imgPreview.setImageURI(uri)
+                extractGps(uri)
             }
         }
     }
@@ -76,9 +81,27 @@ class EditTravelActivity : AppCompatActivity() {
         etPlace.setText(record.place)
         etDate.setText(record.visitDate)
         etMemo.setText(record.memo)
+        extractedLat = record.latitude
+        extractedLng = record.longitude
         record.photoUri?.let {
             selectedPhotoUri = Uri.parse(it)
             imgPreview.setImageURI(selectedPhotoUri)
+        }
+    }
+
+    private fun extractGps(uri: Uri) {
+        try {
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                val exif = ExifInterface(inputStream)
+                val latLong = FloatArray(2)
+                if (exif.getLatLong(latLong)) {
+                    extractedLat = latLong[0].toDouble()
+                    extractedLng = latLong[1].toDouble()
+                    Toast.makeText(this, "위치 정보 추출 완료!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -121,7 +144,9 @@ class EditTravelActivity : AppCompatActivity() {
             place = place,
             visitDate = date,
             memo = memo,
-            photoUri = selectedPhotoUri?.toString()
+            photoUri = selectedPhotoUri?.toString(),
+            latitude = extractedLat,
+            longitude = extractedLng
         )
         dbHelper.updateTravel(record)
         Toast.makeText(this, "수정되었습니다!", Toast.LENGTH_SHORT).show()
